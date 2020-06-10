@@ -42,24 +42,22 @@ class LinkedList:
             node = node.next
         return find_elem
 
-    def delete(self, val, all=False):
+    def delete(self, val, all=False): #метод удаления одного узла по его значению
         node = self.head
-        prev = self.head
-
-        while node is not None:
+        old = self.head
+        while node != None:
             if node.value == val:
-                if node == self.head and node == self.tail:
-                    self.head = self.tail = None  # Если элемент единственный
-                elif node == self.head:
+                if node == self.head and node == self.tail and node.value == val:
+                    self.head = self.tail = None
+                if node == self.head:
                     self.head = node.next
-                elif node == self.tail:
-                    self.tail = prev
-                    prev.next = None
-                else:
-                    prev.next = node.next
-                if not all:
+                if node == self.tail:
+                    self.tail = old
+                old.next = node.next
+                if all == False:
                     return
-            prev = node
+            else:
+                old = node
             node = node.next
 
     def clean(self):
@@ -73,22 +71,29 @@ class LinkedList:
             node = node.next
         return num
 
-    def insert(self, afterNode, newNode):
-        if type(afterNode) is not Node:
-            afterNode = Node(afterNode)
-        if type(newNode) is not Node:
-            newNode = Node(newNode)
-
-        if afterNode is None or self.find(afterNode.value) is None:
-            if self.head is None and self.tail is None:
-                self.add_in_tail(newNode)
+    def insert(self, afterNode, newNode): #метод вставки узла после заданного узла
+        if afterNode == None and self.head == None and self.tail == None:
+            if type(newNode) == Node:
+                LinkedList.add_in_tail(self, newNode) # проверка на пустой список
+            if type(newNode) == int:
+                self.tail = self.head = Node(newNode)
+            return
+        node = self.head
+        while True:
+            if type(newNode) == Node:
+                LinkedList.add_in_tail(self, newNode)
                 return
-            newNode.next = self.head
-            self.head = newNode
-            return
-        elif newNode is None:
-            return
-        else:
-            afterNode = self.find(afterNode.value)
-            newNode.next = afterNode.next
-            afterNode.next = newNode
+            if type(newNode) == int and type(afterNode) == Node:
+                if node.value == afterNode.value:
+                    node.next = Node(newNode, node.next)
+                    if node.next.next == None:
+                        self.tail = node.next
+                    break
+                else: node = node.next
+            if type(newNode) == int and type(afterNode) == int:
+                if node.value == afterNode:
+                    node.next = Node(newNode, node.next)
+                    if node.next.next == None:
+                        self.tail = node.next
+                    break
+                else: node = node.next
